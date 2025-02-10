@@ -5,12 +5,11 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/goodblaster/logs"
 	"github.com/goodblaster/logs/pkg/adapters"
-	"github.com/goodblaster/logs/pkg/formats"
-	"github.com/goodblaster/logs/pkg/levels"
 )
 
-func NewSLogLogger(level levels.Level, format formats.Format, writer io.Writer) *adapters.SLogAdapter {
+func NewSLogLogger(level logs.Level, format logs.Format, writer io.Writer) *adapters.SLogAdapter {
 	var handler slog.Handler
 
 	options := &slog.HandlerOptions{
@@ -31,7 +30,7 @@ func NewSLogLogger(level levels.Level, format formats.Format, writer io.Writer) 
 		},
 	}
 
-	if format == formats.JSON {
+	if format == logs.FormatJSON {
 		handler = slog.NewJSONHandler(writer, options)
 	} else {
 		handler = slog.NewTextHandler(writer, options)

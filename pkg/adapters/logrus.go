@@ -3,11 +3,11 @@ package adapters
 import (
 	"fmt"
 
-	"github.com/goodblaster/logs/pkg/levels"
+	"github.com/goodblaster/logs"
 	"github.com/sirupsen/logrus"
 )
 
-// LogrusAdapter wraps a logrus.Logger to implement the logs.Logger interface.
+// LogrusAdapter wraps a logrus.Logger to implement the logs.Interface interface.
 type LogrusAdapter struct {
 	logger *logrus.Entry
 }
@@ -59,15 +59,15 @@ func (adapter LogrusAdapter) Panic(format string, args ...any) {
 	adapter.logger.Panic(msg)
 }
 
-func ToLogrusLevel(level levels.Level) logrus.Level {
+func ToLogrusLevel(level logs.Level) logrus.Level {
 	switch level {
-	case levels.Debug:
+	case logs.LevelDebug:
 		return logrus.DebugLevel
-	case levels.Info:
+	case logs.LevelInfo:
 		return logrus.InfoLevel
-	case levels.Warn:
+	case logs.LevelWarn:
 		return logrus.WarnLevel
-	case levels.Error:
+	case logs.LevelError:
 		return logrus.ErrorLevel
 	default:
 		return logrus.DebugLevel

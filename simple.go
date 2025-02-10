@@ -3,22 +3,19 @@ package logs
 import (
 	"fmt"
 	"os"
-
-	"github.com/goodblaster/logs/pkg/formats"
-	"github.com/goodblaster/logs/pkg/levels"
 )
 
-func NewSimpleLogger(level levels.Level, format formats.Format) Logger {
+func NewSimpleLogger(level Level, format Format) Interface {
 	return &SimpleLogger{}
 }
 
 type SimpleLogger struct{}
 
-func (logger SimpleLogger) With(key string, value any) Logger {
+func (logger SimpleLogger) With(key string, value any) Interface {
 	fmt.Println("WITH", key, value)
 	return logger
 }
-func (logger SimpleLogger) WithFields(fields map[string]any) Logger {
+func (logger SimpleLogger) WithFields(fields map[string]any) Interface {
 	fmt.Println("WITH_FIELDS", fields)
 	return logger
 }

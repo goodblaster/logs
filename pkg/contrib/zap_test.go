@@ -7,14 +7,12 @@ import (
 	"testing"
 
 	"github.com/goodblaster/logs"
-	"github.com/goodblaster/logs/pkg/formats"
-	"github.com/goodblaster/logs/pkg/levels"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestZapJSON(t *testing.T) {
 	var logBuffer bytes.Buffer
-	log := NewZapLogger(levels.Debug, formats.JSON, &logBuffer)
+	log := NewZapLogger(logs.LevelDebug, logs.FormatJSON, &logBuffer)
 
 	// Define test cases
 	tests := []struct {
@@ -31,7 +29,7 @@ func TestZapJSON(t *testing.T) {
 
 	for _, tt := range tests {
 		logBuffer.Reset() // Clear buffer before each test case
-		logger := logs.Logger(&(*log))
+		logger := logs.Interface(&(*log))
 		for key, value := range tt.fields {
 			logger = logger.With(key, value)
 		}
@@ -86,7 +84,7 @@ func (m Map) Int(key string) int {
 
 func TestZapText(t *testing.T) {
 	var logBuffer bytes.Buffer
-	log := NewZapLogger(levels.Debug, formats.Text, &logBuffer)
+	log := NewZapLogger(logs.LevelDebug, logs.FormatText, &logBuffer)
 
 	// Define test cases
 	tests := []struct {
@@ -103,7 +101,7 @@ func TestZapText(t *testing.T) {
 
 	for _, tt := range tests {
 		logBuffer.Reset() // Clear buffer before each test case
-		logger := logs.Logger(&(*log))
+		logger := logs.Interface(&(*log))
 		for key, value := range tt.fields {
 			logger = logger.With(key, value)
 		}

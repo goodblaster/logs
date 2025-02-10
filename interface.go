@@ -4,9 +4,9 @@ func init() {
 	DefaultLogger = SimpleLogger{}
 }
 
-type Logger interface {
-	With(key string, value any) Logger
-	WithFields(fields map[string]any) Logger
+type Interface interface {
+	With(key string, value any) Interface
+	WithFields(fields map[string]any) Interface
 	Print(format string, args ...any)
 	Debug(format string, args ...any)
 	Info(format string, args ...any)
@@ -15,21 +15,21 @@ type Logger interface {
 	Fatal(format string, args ...any)
 }
 
-var DefaultLogger Logger
+var DefaultLogger Interface
 
-func SetDefaultLogger(logger Logger) {
+func SetDefaultLogger(logger Interface) {
 	DefaultLogger = logger
 }
 
-func With(key string, value any) Logger {
+func With(key string, value any) Interface {
 	return DefaultLogger.With(key, value)
 }
 
-func WithError(err error) Logger {
+func WithError(err error) Interface {
 	return DefaultLogger.With("error", err)
 }
 
-func WithFields(fields map[string]any) Logger {
+func WithFields(fields map[string]any) Interface {
 	return DefaultLogger.WithFields(fields)
 }
 

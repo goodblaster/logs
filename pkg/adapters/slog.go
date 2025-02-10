@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/goodblaster/logs"
-	"github.com/goodblaster/logs/pkg/levels"
 )
 
 const (
@@ -24,11 +23,11 @@ type SLogAdapter struct {
 	logger *slog.Logger
 }
 
-func (adapter SLogAdapter) With(key string, value any) logs.Logger {
+func (adapter SLogAdapter) With(key string, value any) logs.Interface {
 	return &SLogAdapter{adapter.logger.With(key, value)}
 }
 
-func (adapter SLogAdapter) WithFields(fields map[string]any) logs.Logger {
+func (adapter SLogAdapter) WithFields(fields map[string]any) logs.Interface {
 	var params []any
 	for k, v := range fields {
 		params = append(params, k, v)
@@ -101,15 +100,15 @@ func (h *CustomSLogHandler) WithGroup(name string) slog.Handler {
 	return &CustomSLogHandler{Handler: h.Handler.WithGroup(name)}
 }
 
-func ToSLogLevel(level levels.Level) slog.Level {
+func ToSLogLevel(level logs.Level) slog.Level {
 	switch level {
-	case levels.Debug:
+	case logs.LevelDebug:
 		return slog.LevelDebug
-	case levels.Info:
+	case logs.LevelInfo:
 		return slog.LevelInfo
-	case levels.Warn:
+	case logs.LevelWarn:
 		return slog.LevelWarn
-	case levels.Error:
+	case logs.LevelError:
 		return slog.LevelError
 	default:
 		return slog.LevelDebug

@@ -3,19 +3,18 @@ package contrib
 import (
 	"io"
 
+	"github.com/goodblaster/logs"
 	"github.com/goodblaster/logs/pkg/adapters"
-	"github.com/goodblaster/logs/pkg/formats"
-	"github.com/goodblaster/logs/pkg/levels"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-func NewZapLogger(level levels.Level, format formats.Format, writer io.Writer) *adapters.ZapAdapter {
-	encoding := func(format formats.Format) string {
+func NewZapLogger(level logs.Level, format logs.Format, writer io.Writer) *adapters.ZapAdapter {
+	encoding := func(format logs.Format) string {
 		switch format {
-		case formats.JSON:
+		case logs.FormatJSON:
 			return "json"
-		case formats.Console, formats.Text:
+		case logs.FormatConsole, logs.FormatText:
 			return "console"
 		}
 		return "json"
@@ -23,23 +22,23 @@ func NewZapLogger(level levels.Level, format formats.Format, writer io.Writer) *
 
 	zapLevel := zap.DebugLevel
 	switch level {
-	case levels.Debug:
+	case logs.LevelDebug:
 		zapLevel = zap.DebugLevel
-	case levels.Info:
+	case logs.LevelInfo:
 		zapLevel = zap.InfoLevel
-	case levels.Warn:
+	case logs.LevelWarn:
 		zapLevel = zap.WarnLevel
-	case levels.Error:
+	case logs.LevelError:
 		zapLevel = zap.ErrorLevel
-	case levels.Fatal:
+	case logs.LevelFatal:
 		zapLevel = zap.FatalLevel
-	case levels.Panic:
+	case logs.LevelPanic:
 		zapLevel = zap.PanicLevel
 	}
 
 	zapConfig := zap.Config{
 		Level:       zap.NewAtomicLevelAt(zapLevel),
-		Development: level == levels.Debug,
+		Development: level == logs.LevelDebug,
 		Encoding:    encoding(format),
 		EncoderConfig: zapcore.EncoderConfig{
 			// Keys can be anything except the empty string.
@@ -65,9 +64,9 @@ func NewZapLogger(level levels.Level, format formats.Format, writer io.Writer) *
 	var enabler zapcore.LevelEnabler
 
 	switch format {
-	case formats.JSON:
+	case logs.FormatJSON:
 		encoder = zapcore.NewJSONEncoder(zapConfig.EncoderConfig)
-	case formats.Console, formats.Text:
+	case logs.FormatConsole, logs.FormatText:
 		encoder = zapcore.NewConsoleEncoder(zapConfig.EncoderConfig)
 	default:
 		encoder = zapcore.NewJSONEncoder(zapConfig.EncoderConfig)

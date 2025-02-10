@@ -45,11 +45,11 @@ func (adapter ZapAdapter) Flush() {
 	_ = adapter.logger.Sync()
 }
 
-func (adapter ZapAdapter) With(key string, value any) logs.Logger {
+func (adapter ZapAdapter) With(key string, value any) logs.Interface {
 	return &ZapAdapter{adapter.logger.With(zap.Any(key, value))}
 }
 
-func (adapter ZapAdapter) WithFields(fields map[string]any) logs.Logger {
+func (adapter ZapAdapter) WithFields(fields map[string]any) logs.Interface {
 	var zaps []zap.Field
 	for k, v := range fields {
 		zaps = append(zaps, zap.Any(k, v))
