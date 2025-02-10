@@ -1,4 +1,4 @@
-package xlog
+package logos
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/goodblaster/logs"
-	"github.com/goodblaster/logs/pkg/xlog/formatters"
+	"github.com/goodblaster/logs/pkg/logos/formatters"
 )
 
 type Fields = map[string]any

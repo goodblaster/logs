@@ -4,11 +4,11 @@ import (
 	"os"
 
 	"github.com/goodblaster/logs"
-	"github.com/goodblaster/logs/pkg/xlog"
+	"github.com/goodblaster/logs/pkg/logos"
 )
 
 func main() {
-	log := xlog.NewLogger(logs.LevelDebug, logs.FormatConsole, os.Stdout)
+	log := logos.NewLogger(logs.LevelDebug, logs.FormatConsole, os.Stdout)
 	log.With("key", 9).Error("testing ...")
 	log = log.With("key2", "two")
 	log.Warn("warning ...")
