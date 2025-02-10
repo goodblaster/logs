@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/goodblaster/logs"
@@ -18,4 +19,16 @@ func main() {
 		"key6": 6,
 	})
 	log.Debug("debug ...")
+
+	log = logos.NewLogger(logs.LevelError, logs.FormatConsole, os.Stdout)
+	log.(*logos.Logger).LogFunc(logs.LevelDebug, func() string {
+		fmt.Println("log func is being called")
+		return "log func called"
+	})
+
+	log = logos.NewLogger(logs.LevelError, logs.FormatConsole, os.Stdout)
+	log.(*logos.Logger).LogFunc(logs.LevelError, func() string {
+		fmt.Println("log func is being called")
+		return "log func called"
+	})
 }

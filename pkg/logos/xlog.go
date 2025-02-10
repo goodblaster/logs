@@ -119,7 +119,7 @@ func (logger Logger) Log(level logs.Level, format string, args ...any) {
 
 // LogFunc - use for expensive operations where you don't want to calculate the message if the level is not enabled.
 func (logger Logger) LogFunc(level logs.Level, msg func() string) {
-	if logger.level < level {
+	if logger.level > level {
 		return
 	}
 	line := logger.formatter.Format(level, msg(), logger.fields)
