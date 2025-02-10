@@ -1,6 +1,7 @@
 package formatters
 
 import (
+	"encoding/json"
 	"fmt"
 	"slices"
 	"strings"
@@ -20,7 +21,8 @@ func NewConsoleFormatter(cfg Config) Formatter {
 func (f consoleFormatter) Format(level logs.Level, msg string, fields Fields) string {
 	var tuples []string
 	for key, value := range fields {
-		tuples = append(tuples, fmt.Sprintf("%s=%v", key, value))
+		b, _ := json.Marshal(value)
+		tuples = append(tuples, fmt.Sprintf("%s=%v", key, string(b)))
 	}
 	slices.Sort(tuples)
 

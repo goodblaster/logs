@@ -14,5 +14,8 @@ func main() {
 	log.Warn("warning ...")
 	log = log.WithFields(map[string]interface{}{"key3": 3, "key4": "four"})
 	log.Info("info ...")
+	log = log.With("key5", map[string]any{
+		"key6": 6,
+	})
 	log.Debug("debug ...")
 }

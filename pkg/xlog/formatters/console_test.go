@@ -9,16 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewTextFormatter(t *testing.T) {
+func TestNewConsoleFormatter(t *testing.T) {
 	cfg := DefaultConfig
-	fmtr := NewTextFormatter(cfg)
+	fmtr := NewConsoleFormatter(cfg)
 	assert.NotNil(t, fmtr)
 
 	// Default config. Timestamp is close.
 	cfg = DefaultConfig
-	fmtr = NewTextFormatter(cfg)
-	line := fmtr.Format(logs.LevelInfo, "Test", nil)
-	assert.Equal(t, "info", strings.Fields(line)[1])
+	fmtr = NewConsoleFormatter(cfg)
+	line := fmtr.Format(logs.LevelDebug, "Test", nil)
+	assert.Equal(t, "\x1b[34mdebug\x1b[0m", strings.Fields(line)[1])
 	assert.Equal(t, "Test", strings.Fields(line)[2])
 	then, err := time.ParseInLocation(DefaultTimestampFormat, strings.Fields(line)[0], time.Local)
 	assert.NoError(t, err)
@@ -31,10 +31,10 @@ func TestNewTextFormatter(t *testing.T) {
 			return static
 		},
 	}
-	fmtr = NewTextFormatter(cfg)
+	fmtr = NewConsoleFormatter(cfg)
 	line = fmtr.Format(logs.LevelPrint, "Test", nil)
 	assert.Equal(t, static, strings.Fields(line)[0])
-	assert.Equal(t, "print", strings.Fields(line)[1])
+	assert.Equal(t, "\x1b[0mprint\x1b[0m", strings.Fields(line)[1])
 	assert.Equal(t, "Test", strings.Fields(line)[2])
 
 	// UTC
@@ -43,22 +43,22 @@ func TestNewTextFormatter(t *testing.T) {
 			return time.Now().UTC().Format(DefaultTimestampFormat)
 		},
 	}
-	fmtr = NewTextFormatter(cfg)
+	fmtr = NewConsoleFormatter(cfg)
 	line = fmtr.Format(logs.LevelInfo, "Test", nil)
-	assert.Equal(t, "info", strings.Fields(line)[1])
+	assert.Equal(t, "\x1b[32minfo\x1b[0m", strings.Fields(line)[1])
 	assert.Equal(t, "Test", strings.Fields(line)[2])
 	then, err = time.ParseInLocation(DefaultTimestampFormat, strings.Fields(line)[0], time.UTC)
 	assert.NoError(t, err)
 	assert.WithinDuration(t, time.Now().UTC(), then.UTC(), time.Second)
 
 	// With some fields.
-	line = fmtr.Format(logs.LevelInfo, "Test", Fields{"key": "value"})
-	assert.Equal(t, "info", strings.Fields(line)[1])
+	line = fmtr.Format(logs.LevelError, "Test", Fields{"key": "value"})
+	assert.Equal(t, "\x1b[31merror\x1b[0m", strings.Fields(line)[1])
 	assert.Equal(t, "key=\"value\"", strings.Fields(line)[2])
 	assert.Equal(t, "Test", strings.Fields(line)[3])
 }
 
-func Test_textFormatter_Format(t *testing.T) {
+func Test_consoleFormatter_Format(t *testing.T) {
 	type params struct {
 		cfg Config
 	}
@@ -111,7 +111,7 @@ func Test_textFormatter_Format(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := textFormatter{
+			f := consoleFormatter{
 				cfg: tt.params.cfg,
 			}
 			got := f.Format(tt.args.level, tt.args.msg, tt.args.fields)
