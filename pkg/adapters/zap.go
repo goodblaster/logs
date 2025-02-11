@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/levels"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -41,20 +42,78 @@ type ZapAdapter struct {
 	logger *zap.Logger
 }
 
+func (adapter ZapAdapter) Level() levels.Level {
+	return levels.Debug // TODO: Implement
+}
+
+func (adapter ZapAdapter) SetLevel(level levels.Level) {
+	// TODO: Implement
+}
+
 func (adapter ZapAdapter) Flush() {
 	_ = adapter.logger.Sync()
 }
 
-func (adapter ZapAdapter) With(key string, value any) logs.Logger {
+func (adapter ZapAdapter) With(key string, value any) logs.Interface {
 	return &ZapAdapter{adapter.logger.With(zap.Any(key, value))}
 }
 
-func (adapter ZapAdapter) WithFields(fields map[string]any) logs.Logger {
+func (adapter ZapAdapter) WithFields(fields map[string]any) logs.Interface {
 	var zaps []zap.Field
 	for k, v := range fields {
 		zaps = append(zaps, zap.Any(k, v))
 	}
 	return &ZapAdapter{adapter.logger.With(zaps...)}
+}
+
+func (adapter ZapAdapter) Log(level levels.Level, format string, args ...any) {
+	switch level {
+	case levels.Debug:
+		adapter.Debug(format, args...)
+	case levels.Info:
+		adapter.Info(format, args...)
+	case levels.Warn:
+		adapter.Warn(format, args...)
+	case levels.Error:
+		adapter.Error(format, args...)
+	case levels.DPanic:
+		adapter.DPanic(format, args...)
+	case levels.Panic:
+		adapter.Panic(format, args...)
+	case levels.Fatal:
+		adapter.Fatal(format, args...)
+	case levels.Print:
+		adapter.Print(format, args...)
+	}
+}
+
+func (adapter ZapAdapter) WithError(err error) logs.Interface {
+	return adapter.With("error", err)
+}
+
+func (adapter ZapAdapter) LogFunc(level levels.Level, msg func() string) {
+	if level > adapter.Level() {
+		return
+	}
+
+	switch level {
+	case levels.Debug:
+		adapter.Debug(msg())
+	case levels.Info:
+		adapter.Info(msg())
+	case levels.Warn:
+		adapter.Warn(msg())
+	case levels.Error:
+		adapter.Error(msg())
+	case levels.DPanic:
+		adapter.DPanic(msg())
+	case levels.Panic:
+		adapter.Panic(msg())
+	case levels.Fatal:
+		adapter.Fatal(msg())
+	case levels.Print:
+		adapter.Print(msg())
+	}
 }
 
 func (adapter ZapAdapter) Print(format string, args ...any) {
@@ -90,4 +149,53 @@ func (adapter ZapAdapter) Fatal(format string, args ...any) {
 func (adapter ZapAdapter) Panic(format string, args ...any) {
 	msg := fmt.Sprintf(format, args...)
 	adapter.logger.Panic(msg)
+}
+
+func (adapter ZapAdapter) DPanic(format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
+	adapter.logger.DPanic(msg)
+}
+
+func ToZapLevel(level levels.Level) zapcore.Level {
+	switch level {
+	case levels.Debug:
+		return zap.DebugLevel
+	case levels.Info:
+		return zap.InfoLevel
+	case levels.Warn:
+		return zap.WarnLevel
+	case levels.Error:
+		return zap.ErrorLevel
+	case levels.DPanic:
+		return zap.DPanicLevel
+	case levels.Panic:
+		return zap.PanicLevel
+	case levels.Fatal:
+		return zap.FatalLevel
+	case levels.Print:
+		return PrintLevel
+	}
+	return zap.InfoLevel
+}
+
+func FromZapLevel(level zapcore.Level) levels.Level {
+	switch level {
+	case zap.DebugLevel:
+		return levels.Debug
+	case zap.InfoLevel:
+		return levels.Info
+	case zap.WarnLevel:
+		return levels.Warn
+	case zap.ErrorLevel:
+		return levels.Error
+	case zap.DPanicLevel:
+		return levels.DPanic
+	case zap.PanicLevel:
+		return levels.Panic
+	case zap.FatalLevel:
+		return levels.Fatal
+	case PrintLevel:
+		return levels.Print
+	}
+	return levels.Info
 }

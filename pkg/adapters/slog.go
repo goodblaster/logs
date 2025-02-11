@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/goodblaster/logs"
-	"github.com/goodblaster/logs/pkg/levels"
+	"github.com/goodblaster/logs/levels"
 )
 
 const (
@@ -24,16 +24,40 @@ type SLogAdapter struct {
 	logger *slog.Logger
 }
 
-func (adapter SLogAdapter) With(key string, value any) logs.Logger {
+func (adapter SLogAdapter) Level() levels.Level {
+	return levels.Debug // TODO: Implement
+}
+
+func (adapter SLogAdapter) SetLevel(level levels.Level) {
+	slog.SetLogLoggerLevel(ToSLogLevel(level))
+}
+
+func (adapter SLogAdapter) With(key string, value any) logs.Interface {
 	return &SLogAdapter{adapter.logger.With(key, value)}
 }
 
-func (adapter SLogAdapter) WithFields(fields map[string]any) logs.Logger {
+func (adapter SLogAdapter) WithFields(fields map[string]any) logs.Interface {
 	var params []any
 	for k, v := range fields {
 		params = append(params, k, v)
 	}
 	return &SLogAdapter{adapter.logger.With(params...)}
+}
+
+func (adapter SLogAdapter) WithError(err error) logs.Interface {
+	return adapter.With("error", err)
+}
+
+func (adapter SLogAdapter) Log(level levels.Level, format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
+	adapter.logger.Log(context.Background(), ToSLogLevel(level), msg)
+}
+
+func (adapter SLogAdapter) LogFunc(level levels.Level, msg func() string) {
+	if level > adapter.Level() {
+		return
+	}
+	adapter.logger.Log(context.Background(), ToSLogLevel(level), msg())
 }
 
 func (adapter SLogAdapter) Print(format string, args ...any) {

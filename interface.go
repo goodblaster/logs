@@ -1,12 +1,18 @@
 package logs
 
+import "github.com/goodblaster/logs/levels"
+
 func init() {
 	DefaultLogger = SimpleLogger{}
 }
 
-type Logger interface {
-	With(key string, value any) Logger
-	WithFields(fields map[string]any) Logger
+type Interface interface {
+	SetLevel(level levels.Level)
+	Log(level levels.Level, format string, args ...any)
+	LogFunc(level levels.Level, f func() string)
+	With(key string, value any) Interface
+	WithFields(fields map[string]any) Interface
+	WithError(err error) Interface
 	Print(format string, args ...any)
 	Debug(format string, args ...any)
 	Info(format string, args ...any)
@@ -15,22 +21,34 @@ type Logger interface {
 	Fatal(format string, args ...any)
 }
 
-var DefaultLogger Logger
+var DefaultLogger Interface
 
-func SetDefaultLogger(logger Logger) {
+func SetDefaultLogger(logger Interface) {
 	DefaultLogger = logger
 }
 
-func With(key string, value any) Logger {
+func SetLevel(level levels.Level) {
+	DefaultLogger.SetLevel(level)
+}
+
+func With(key string, value any) Interface {
 	return DefaultLogger.With(key, value)
 }
 
-func WithError(err error) Logger {
-	return DefaultLogger.With("error", err)
+func WithError(err error) Interface {
+	return DefaultLogger.WithError(err)
 }
 
-func WithFields(fields map[string]any) Logger {
+func WithFields(fields map[string]any) Interface {
 	return DefaultLogger.WithFields(fields)
+}
+
+func Log(level levels.Level, format string, args ...any) {
+	DefaultLogger.Log(level, format, args...)
+}
+
+func LogFunc(level levels.Level, msg func() string) {
+	DefaultLogger.LogFunc(level, msg)
 }
 
 func Print(format string, args ...any) {

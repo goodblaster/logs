@@ -3,25 +3,79 @@ package adapters
 import (
 	"fmt"
 
-	"github.com/goodblaster/logs/pkg/levels"
+	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/levels"
 	"github.com/sirupsen/logrus"
 )
 
-// LogrusAdapter wraps a logrus.Logger to implement the logs.Logger interface.
+// LogrusAdapter wraps a logrus.Logger to implement the logs.Interface interface.
 type LogrusAdapter struct {
 	logger *logrus.Entry
+}
+
+func (adapter LogrusAdapter) Level() levels.Level {
+	return levels.Level(adapter.logger.Level)
+}
+
+func (adapter LogrusAdapter) SetLevel(level levels.Level) {
+	adapter.logger.Logger.SetLevel(ToLogrusLevel(level))
 }
 
 func Logrus(logger *logrus.Logger) *LogrusAdapter {
 	return &LogrusAdapter{logrus.NewEntry(logger)}
 }
 
-func (adapter LogrusAdapter) With(key string, value any) *LogrusAdapter {
+func (adapter LogrusAdapter) With(key string, value any) logs.Interface {
 	return &LogrusAdapter{adapter.logger.WithField(key, value)}
 }
 
-func (adapter LogrusAdapter) WithFields(fields map[string]any) *LogrusAdapter {
+func (adapter LogrusAdapter) WithFields(fields map[string]any) logs.Interface {
 	return &LogrusAdapter{adapter.logger.WithFields(logrus.Fields(fields))}
+}
+
+func (adapter LogrusAdapter) WithError(err error) logs.Interface {
+	return adapter.With("error", err)
+}
+
+func (adapter LogrusAdapter) Log(level levels.Level, format string, args ...any) {
+	switch level {
+	case levels.Print:
+		adapter.Print(format, args...)
+	case levels.Debug:
+		adapter.Debug(format, args...)
+	case levels.Info:
+		adapter.Info(format, args...)
+	case levels.Warn:
+		adapter.Warn(format, args...)
+	case levels.Error:
+		adapter.Error(format, args...)
+	case levels.Panic:
+		adapter.Panic(format, args...)
+	case levels.Fatal:
+		adapter.Fatal(format, args...)
+	}
+}
+
+func (adapter LogrusAdapter) LogFunc(level levels.Level, msg func() string) {
+	if level > adapter.Level() {
+		return
+	}
+	switch level {
+	case levels.Print:
+		adapter.Print(msg())
+	case levels.Debug:
+		adapter.Debug(msg())
+	case levels.Info:
+		adapter.Info(msg())
+	case levels.Warn:
+		adapter.Warn(msg())
+	case levels.Error:
+		adapter.Error(msg())
+	case levels.Panic:
+		adapter.Panic(msg())
+	case levels.Fatal:
+		adapter.Fatal(msg())
+	}
 }
 
 func (adapter LogrusAdapter) Print(format string, args ...any) {
@@ -69,8 +123,31 @@ func ToLogrusLevel(level levels.Level) logrus.Level {
 		return logrus.WarnLevel
 	case levels.Error:
 		return logrus.ErrorLevel
+	case levels.Fatal:
+		return logrus.FatalLevel
+	case levels.Panic:
+		return logrus.PanicLevel
 	default:
 		return logrus.DebugLevel
+	}
+}
+
+func FromLogrusLevel(level logrus.Level) levels.Level {
+	switch level {
+	case logrus.DebugLevel:
+		return levels.Debug
+	case logrus.InfoLevel:
+		return levels.Info
+	case logrus.WarnLevel:
+		return levels.Warn
+	case logrus.ErrorLevel:
+		return levels.Error
+	case logrus.FatalLevel:
+		return levels.Fatal
+	case logrus.PanicLevel:
+		return levels.Panic
+	default:
+		return levels.Debug
 	}
 }
 

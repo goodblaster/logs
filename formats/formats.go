@@ -1,7 +1,13 @@
 package formats
 
 type Format int
-type FormatName string
+
+func (f Format) String() string {
+	if name, ok := FormatNames[f]; ok {
+		return name
+	}
+	return "unknown"
+}
 
 const (
 	JSON Format = iota
@@ -15,7 +21,7 @@ var Formats = []Format{
 	Console,
 }
 
-var FormatNames = map[Format]FormatName{
+var FormatNames = map[Format]string{
 	JSON:    "JSON",
 	Text:    "TEXT",
 	Console: "CONSOLE",

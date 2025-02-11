@@ -4,23 +4,40 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/goodblaster/logs/pkg/formats"
-	"github.com/goodblaster/logs/pkg/levels"
+	"github.com/goodblaster/logs/formats"
+	"github.com/goodblaster/logs/levels"
 )
 
-func NewSimpleLogger(level levels.Level, format formats.Format) Logger {
+func NewSimpleLogger(level levels.Level, format formats.Format) Interface {
 	return &SimpleLogger{}
 }
 
 type SimpleLogger struct{}
 
-func (logger SimpleLogger) With(key string, value any) Logger {
+func (logger SimpleLogger) SetLevel(level levels.Level) {}
+
+func (logger SimpleLogger) With(key string, value any) Interface {
 	fmt.Println("WITH", key, value)
 	return logger
 }
-func (logger SimpleLogger) WithFields(fields map[string]any) Logger {
+
+func (logger SimpleLogger) WithFields(fields map[string]any) Interface {
 	fmt.Println("WITH_FIELDS", fields)
 	return logger
+}
+
+func (logger SimpleLogger) WithError(err error) Interface {
+	fmt.Println("WITH_ERROR", err)
+	return logger
+}
+
+func (logger SimpleLogger) Log(level levels.Level, format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
+	fmt.Println("LOG", level, msg)
+}
+
+func (logger SimpleLogger) LogFunc(level levels.Level, f func() string) {
+	fmt.Println("LOG_FUNC", level, f())
 }
 
 func (logger SimpleLogger) Print(format string, args ...any) {

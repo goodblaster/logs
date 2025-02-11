@@ -4,13 +4,14 @@ import (
 	"io"
 	"os"
 
+	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/formats"
+	"github.com/goodblaster/logs/levels"
 	"github.com/goodblaster/logs/pkg/adapters"
-	"github.com/goodblaster/logs/pkg/formats"
-	"github.com/goodblaster/logs/pkg/levels"
 	"github.com/sirupsen/logrus"
 )
 
-func NewLogrusLogger(level levels.Level, format formats.Format, writer io.Writer) *adapters.LogrusAdapter {
+func NewLogrusLogger(level levels.Level, format formats.Format, writer io.Writer) logs.Interface {
 	var formatter logrus.Formatter
 	if format == formats.JSON {
 		formatter = new(logrus.JSONFormatter)

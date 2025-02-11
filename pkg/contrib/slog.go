@@ -5,12 +5,13 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/formats"
+	"github.com/goodblaster/logs/levels"
 	"github.com/goodblaster/logs/pkg/adapters"
-	"github.com/goodblaster/logs/pkg/formats"
-	"github.com/goodblaster/logs/pkg/levels"
 )
 
-func NewSLogLogger(level levels.Level, format formats.Format, writer io.Writer) *adapters.SLogAdapter {
+func NewSLogLogger(level levels.Level, format formats.Format, writer io.Writer) logs.Interface {
 	var handler slog.Handler
 
 	options := &slog.HandlerOptions{

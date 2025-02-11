@@ -3,6 +3,7 @@ module github.com/goodblaster/logs
 go 1.23.3
 
 require (
+	github.com/goodblaster/errors v0.0.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/zap v1.27.0
