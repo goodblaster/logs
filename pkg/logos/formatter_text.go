@@ -1,4 +1,4 @@
-package formatters
+package logos
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/levels"
 )
 
 type textFormatter struct {
@@ -16,7 +16,7 @@ type textFormatter struct {
 func NewTextFormatter(cfg Config) Formatter {
 	return &textFormatter{cfg: cfg}
 }
-func (f textFormatter) Format(level logs.Level, msg string, fields Fields) string {
+func (f textFormatter) Format(level levels.Level, msg string, fields Fields) string {
 	var tuples []string
 	for key, value := range fields {
 		b, _ := json.Marshal(value)

@@ -6,68 +6,24 @@ import (
 	"sync"
 
 	"github.com/goodblaster/logs"
-	"github.com/goodblaster/logs/pkg/logos/formatters"
+	"github.com/goodblaster/logs/formats"
+	"github.com/goodblaster/logs/levels"
 )
 
 type Fields = map[string]any
 
-type Level int
-
-// Default levels
-var (
-	LevelDebug  Level = 0
-	LevelInfo   Level = 1
-	LevelWarn   Level = 2
-	LevelError  Level = 3
-	LevelDPanic Level = 4
-	LevelPanic  Level = 5
-	LevelFatal  Level = 6
-	LevelPrint  Level = 10
-)
-
-// LevelNames - change if you like.
-var LevelNames map[Level]string
-
-// LevelOrder - change if you like.
-var LevelOrder []Level
-
-// init - set defaults
-func init() {
-	LevelNames = map[Level]string{
-		LevelDebug:  "debug",
-		LevelInfo:   "info",
-		LevelWarn:   "warn",
-		LevelError:  "error",
-		LevelDPanic: "dpanic",
-		LevelPanic:  "panic",
-		LevelFatal:  "fatal",
-		LevelPrint:  "print",
-	}
-
-	LevelOrder = []Level{
-		LevelDebug,
-		LevelInfo,
-		LevelWarn,
-		LevelError,
-		LevelDPanic,
-		LevelPanic,
-		LevelFatal,
-		LevelPrint,
-	}
-}
-
 type Logger struct {
-	level     logs.Level
-	formatter formatters.Formatter
+	level     levels.Level
+	formatter Formatter
 	writer    io.Writer
 	sync      *sync.Mutex
 	fields    Fields
 }
 
-func NewLogger(level logs.Level, format logs.Format, writer io.Writer) logs.Interface {
+func NewLogger(level levels.Level, format formats.Format, writer io.Writer) logs.Interface {
 	return &Logger{
 		level:     level,
-		formatter: formatters.NewFormatter(format),
+		formatter: NewFormatter(format),
 		writer:    writer,
 		sync:      &sync.Mutex{},
 		fields:    nil,
@@ -108,7 +64,7 @@ func (logger Logger) WithFields(fields Fields) logs.Interface {
 	return &newLogger
 }
 
-func (logger Logger) Log(level logs.Level, format string, args ...any) {
+func (logger Logger) Log(level levels.Level, format string, args ...any) {
 	if logger.level > level {
 		return
 	}
@@ -118,35 +74,34 @@ func (logger Logger) Log(level logs.Level, format string, args ...any) {
 }
 
 // LogFunc - use for expensive operations where you don't want to calculate the message if the level is not enabled.
-func (logger Logger) LogFunc(level logs.Level, msg func() string) {
+func (logger Logger) LogFunc(level levels.Level, msg func() string) {
 	if logger.level > level {
 		return
 	}
-	line := logger.formatter.Format(level, msg(), logger.fields)
-	_, _ = fmt.Fprintln(logger.writer, line)
+	logger.Log(level, msg())
 }
 
 func (logger Logger) Print(format string, args ...any) {
-	logger.Log(logs.LevelPrint, format, args...)
+	logger.Log(levels.Print, format, args...)
 }
 
 func (logger Logger) Debug(format string, args ...any) {
-	logger.Log(logs.LevelDebug, format, args...)
+	logger.Log(levels.Debug, format, args...)
 }
 
 func (logger Logger) Info(format string, args ...any) {
-	logger.Log(logs.LevelInfo, format, args...)
+	logger.Log(levels.Info, format, args...)
 }
 
 func (logger Logger) Warn(format string, args ...any) {
-	logger.Log(logs.LevelWarn, format, args...)
+	logger.Log(levels.Warn, format, args...)
 }
 
 func (logger Logger) Error(format string, args ...any) {
-	logger.Log(logs.LevelError, format, args...)
+	logger.Log(levels.Error, format, args...)
 }
 
 func (logger Logger) Fatal(format string, args ...any) {
-	logger.Log(logs.LevelFatal, format, args...)
+	logger.Log(levels.Fatal, format, args...)
 	panic(fmt.Sprintf(format, args...))
 }

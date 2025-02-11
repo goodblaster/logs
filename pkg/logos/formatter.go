@@ -1,15 +1,14 @@
-package formatters
+package logos
 
 import (
 	"time"
 
-	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/formats"
+	"github.com/goodblaster/logs/levels"
 )
 
-type Fields = map[string]any
-
 type Formatter interface {
-	Format(level logs.Level, msg string, fields Fields) string
+	Format(level levels.Level, msg string, fields Fields) string
 }
 
 type Config struct {
@@ -20,20 +19,20 @@ var DefaultConfig = Config{
 	Timestamp: DefaultTimestamp,
 }
 
-func NewFormatter(format logs.Format) Formatter {
+func NewFormatter(format formats.Format) Formatter {
 	return NewFormatterWithConfig(format, DefaultConfig)
 }
 
-func NewFormatterWithConfig(format logs.Format, cfg Config) Formatter {
+func NewFormatterWithConfig(format formats.Format, cfg Config) Formatter {
 	switch format {
-	case logs.FormatJSON:
+	case formats.JSON:
 		return NewJsonFormatter(cfg)
-	case logs.FormatText:
+	case formats.Text:
 		return NewTextFormatter(cfg)
-	case logs.FormatConsole:
+	case formats.Console:
 		return NewConsoleFormatter(cfg)
 	}
-	return &jsonFormatter{}
+	panic("unknown format")
 }
 
 const DefaultTimestampFormat = "2006-01-02T15:04:05"

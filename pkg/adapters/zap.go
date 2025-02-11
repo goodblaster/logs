@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/levels"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -57,6 +58,48 @@ func (adapter ZapAdapter) WithFields(fields map[string]any) logs.Interface {
 	return &ZapAdapter{adapter.logger.With(zaps...)}
 }
 
+func (adapter ZapAdapter) Log(level levels.Level, format string, args ...any) {
+	switch level {
+	case levels.Debug:
+		adapter.Debug(format, args...)
+	case levels.Info:
+		adapter.Info(format, args...)
+	case levels.Warn:
+		adapter.Warn(format, args...)
+	case levels.Error:
+		adapter.Error(format, args...)
+	case levels.DPanic:
+		adapter.DPanic(format, args...)
+	case levels.Panic:
+		adapter.Panic(format, args...)
+	case levels.Fatal:
+		adapter.Fatal(format, args...)
+	case levels.Print:
+		adapter.Print(format, args...)
+	}
+}
+
+func (adapter ZapAdapter) LogFunc(level levels.Level, msg func() string) {
+	switch level {
+	case levels.Debug:
+		adapter.Debug(msg())
+	case levels.Info:
+		adapter.Info(msg())
+	case levels.Warn:
+		adapter.Warn(msg())
+	case levels.Error:
+		adapter.Error(msg())
+	case levels.DPanic:
+		adapter.DPanic(msg())
+	case levels.Panic:
+		adapter.Panic(msg())
+	case levels.Fatal:
+		adapter.Fatal(msg())
+	case levels.Print:
+		adapter.Print(msg())
+	}
+}
+
 func (adapter ZapAdapter) Print(format string, args ...any) {
 	msg := fmt.Sprintf(format, args...)
 	adapter.logger.Log(PrintLevel, msg)
@@ -90,4 +133,9 @@ func (adapter ZapAdapter) Fatal(format string, args ...any) {
 func (adapter ZapAdapter) Panic(format string, args ...any) {
 	msg := fmt.Sprintf(format, args...)
 	adapter.logger.Panic(msg)
+}
+
+func (adapter ZapAdapter) DPanic(format string, args ...any) {
+	msg := fmt.Sprintf(format, args...)
+	adapter.logger.DPanic(msg)
 }

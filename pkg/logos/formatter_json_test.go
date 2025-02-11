@@ -1,11 +1,11 @@
-package formatters
+package logos
 
 import (
 	"encoding/json"
 	"testing"
 	"time"
 
-	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/levels"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,7 +13,7 @@ func TestNewJsonFormatter(t *testing.T) {
 	// Default config. Timestamp is close.
 	cfg := DefaultConfig
 	fmtr := NewJsonFormatter(cfg)
-	line := fmtr.Format(logs.LevelInfo, "Test", nil)
+	line := fmtr.Format(levels.Info, "Test", nil)
 	var m map[string]any //
 	assert.NoError(t, json.Unmarshal([]byte(line), &m))
 	then, err := time.ParseInLocation(DefaultTimestampFormat, m["timestamp"].(string), time.Local)
@@ -28,7 +28,7 @@ func TestNewJsonFormatter(t *testing.T) {
 		},
 	}
 	fmtr = NewJsonFormatter(cfg)
-	line = fmtr.Format(logs.LevelInfo, "Test", nil)
+	line = fmtr.Format(levels.Info, "Test", nil)
 	assert.NoError(t, json.Unmarshal([]byte(line), &m))
 	assert.Equal(t, static, m["timestamp"])
 
@@ -39,7 +39,7 @@ func TestNewJsonFormatter(t *testing.T) {
 		},
 	}
 	fmtr = NewJsonFormatter(cfg)
-	line = fmtr.Format(logs.LevelInfo, "Test", nil)
+	line = fmtr.Format(levels.Info, "Test", nil)
 	assert.NoError(t, json.Unmarshal([]byte(line), &m))
 	then, err = time.ParseInLocation(DefaultTimestampFormat, m["timestamp"].(string), time.UTC)
 	assert.NoError(t, err)
@@ -51,7 +51,7 @@ func Test_jsonFormatter_Format(t *testing.T) {
 		cfg Config
 	}
 	type args struct {
-		level  logs.Level
+		level  levels.Level
 		msg    string
 		fields Fields
 	}
@@ -67,7 +67,7 @@ func Test_jsonFormatter_Format(t *testing.T) {
 				cfg: DefaultConfig,
 			},
 			args: args{
-				level:  logs.LevelInfo,
+				level:  levels.Info,
 				msg:    "Test",
 				fields: nil,
 			},
@@ -81,7 +81,7 @@ func Test_jsonFormatter_Format(t *testing.T) {
 				cfg: DefaultConfig,
 			},
 			args: args{
-				level: logs.LevelInfo,
+				level: levels.Info,
 				msg:   "Test",
 				fields: map[string]any{
 					"key1": "value1",

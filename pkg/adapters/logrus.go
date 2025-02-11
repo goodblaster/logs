@@ -3,7 +3,7 @@ package adapters
 import (
 	"fmt"
 
-	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/levels"
 	"github.com/sirupsen/logrus"
 )
 
@@ -59,15 +59,15 @@ func (adapter LogrusAdapter) Panic(format string, args ...any) {
 	adapter.logger.Panic(msg)
 }
 
-func ToLogrusLevel(level logs.Level) logrus.Level {
+func ToLogrusLevel(level levels.Level) logrus.Level {
 	switch level {
-	case logs.LevelDebug:
+	case levels.Debug:
 		return logrus.DebugLevel
-	case logs.LevelInfo:
+	case levels.Info:
 		return logrus.InfoLevel
-	case logs.LevelWarn:
+	case levels.Warn:
 		return logrus.WarnLevel
-	case logs.LevelError:
+	case levels.Error:
 		return logrus.ErrorLevel
 	default:
 		return logrus.DebugLevel

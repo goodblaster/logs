@@ -1,10 +1,10 @@
-package formatters
+package logos
 
 import (
 	"encoding/json"
 
 	"github.com/goodblaster/errors"
-	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/levels"
 )
 
 type jsonFormatter struct {
@@ -15,7 +15,7 @@ func NewJsonFormatter(cfg Config) Formatter {
 	return &jsonFormatter{cfg: cfg}
 }
 
-func (f jsonFormatter) Format(level logs.Level, msg string, fields Fields) string {
+func (f jsonFormatter) Format(level levels.Level, msg string, fields Fields) string {
 	type Entry struct {
 		Level     string `json:"level"`
 		Timestamp string `json:"timestamp"`

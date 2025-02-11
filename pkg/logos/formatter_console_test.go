@@ -1,11 +1,11 @@
-package formatters
+package logos
 
 import (
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/levels"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +17,7 @@ func TestNewConsoleFormatter(t *testing.T) {
 	// Default config. Timestamp is close.
 	cfg = DefaultConfig
 	fmtr = NewConsoleFormatter(cfg)
-	line := fmtr.Format(logs.LevelDebug, "Test", nil)
+	line := fmtr.Format(levels.Debug, "Test", nil)
 	assert.Equal(t, "\x1b[34mdebug\x1b[0m", strings.Fields(line)[1])
 	assert.Equal(t, "Test", strings.Fields(line)[2])
 	then, err := time.ParseInLocation(DefaultTimestampFormat, strings.Fields(line)[0], time.Local)
@@ -32,7 +32,7 @@ func TestNewConsoleFormatter(t *testing.T) {
 		},
 	}
 	fmtr = NewConsoleFormatter(cfg)
-	line = fmtr.Format(logs.LevelPrint, "Test", nil)
+	line = fmtr.Format(levels.Print, "Test", nil)
 	assert.Equal(t, static, strings.Fields(line)[0])
 	assert.Equal(t, "\x1b[0mprint\x1b[0m", strings.Fields(line)[1])
 	assert.Equal(t, "Test", strings.Fields(line)[2])
@@ -44,7 +44,7 @@ func TestNewConsoleFormatter(t *testing.T) {
 		},
 	}
 	fmtr = NewConsoleFormatter(cfg)
-	line = fmtr.Format(logs.LevelInfo, "Test", nil)
+	line = fmtr.Format(levels.Info, "Test", nil)
 	assert.Equal(t, "\x1b[32minfo\x1b[0m", strings.Fields(line)[1])
 	assert.Equal(t, "Test", strings.Fields(line)[2])
 	then, err = time.ParseInLocation(DefaultTimestampFormat, strings.Fields(line)[0], time.UTC)
@@ -52,7 +52,7 @@ func TestNewConsoleFormatter(t *testing.T) {
 	assert.WithinDuration(t, time.Now().UTC(), then.UTC(), time.Second)
 
 	// With some fields.
-	line = fmtr.Format(logs.LevelError, "Test", Fields{"key": "value"})
+	line = fmtr.Format(levels.Error, "Test", Fields{"key": "value"})
 	assert.Equal(t, "\x1b[31merror\x1b[0m", strings.Fields(line)[1])
 	assert.Equal(t, "key=\"value\"", strings.Fields(line)[2])
 	assert.Equal(t, "Test", strings.Fields(line)[3])
@@ -63,7 +63,7 @@ func Test_consoleFormatter_Format(t *testing.T) {
 		cfg Config
 	}
 	type args struct {
-		level  logs.Level
+		level  levels.Level
 		msg    string
 		fields Fields
 	}
@@ -79,7 +79,7 @@ func Test_consoleFormatter_Format(t *testing.T) {
 				cfg: DefaultConfig,
 			},
 			args: args{
-				level:  logs.LevelInfo,
+				level:  levels.Info,
 				msg:    "Test",
 				fields: nil,
 			},
@@ -95,7 +95,7 @@ func Test_consoleFormatter_Format(t *testing.T) {
 				cfg: DefaultConfig,
 			},
 			args: args{
-				level: logs.LevelInfo,
+				level: levels.Info,
 				msg:   "Test",
 				fields: map[string]any{
 					"key1": "value1",

@@ -1,10 +1,14 @@
 package logs
 
+import "github.com/goodblaster/logs/levels"
+
 func init() {
 	DefaultLogger = SimpleLogger{}
 }
 
 type Interface interface {
+	Log(level levels.Level, format string, args ...any)
+	LogFunc(level levels.Level, f func() string)
 	With(key string, value any) Interface
 	WithFields(fields map[string]any) Interface
 	Print(format string, args ...any)
@@ -31,6 +35,14 @@ func WithError(err error) Interface {
 
 func WithFields(fields map[string]any) Interface {
 	return DefaultLogger.WithFields(fields)
+}
+
+func Log(level levels.Level, format string, args ...any) {
+	DefaultLogger.Log(level, format, args...)
+}
+
+func LogFunc(level levels.Level, msg func() string) {
+	DefaultLogger.LogFunc(level, msg)
 }
 
 func Print(format string, args ...any) {

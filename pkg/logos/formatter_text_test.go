@@ -1,11 +1,11 @@
-package formatters
+package logos
 
 import (
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/goodblaster/logs"
+	"github.com/goodblaster/logs/levels"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +17,7 @@ func TestNewTextFormatter(t *testing.T) {
 	// Default config. Timestamp is close.
 	cfg = DefaultConfig
 	fmtr = NewTextFormatter(cfg)
-	line := fmtr.Format(logs.LevelInfo, "Test", nil)
+	line := fmtr.Format(levels.Info, "Test", nil)
 	assert.Equal(t, "info", strings.Fields(line)[1])
 	assert.Equal(t, "Test", strings.Fields(line)[2])
 	then, err := time.ParseInLocation(DefaultTimestampFormat, strings.Fields(line)[0], time.Local)
@@ -32,7 +32,7 @@ func TestNewTextFormatter(t *testing.T) {
 		},
 	}
 	fmtr = NewTextFormatter(cfg)
-	line = fmtr.Format(logs.LevelPrint, "Test", nil)
+	line = fmtr.Format(levels.Print, "Test", nil)
 	assert.Equal(t, static, strings.Fields(line)[0])
 	assert.Equal(t, "print", strings.Fields(line)[1])
 	assert.Equal(t, "Test", strings.Fields(line)[2])
@@ -44,7 +44,7 @@ func TestNewTextFormatter(t *testing.T) {
 		},
 	}
 	fmtr = NewTextFormatter(cfg)
-	line = fmtr.Format(logs.LevelInfo, "Test", nil)
+	line = fmtr.Format(levels.Info, "Test", nil)
 	assert.Equal(t, "info", strings.Fields(line)[1])
 	assert.Equal(t, "Test", strings.Fields(line)[2])
 	then, err = time.ParseInLocation(DefaultTimestampFormat, strings.Fields(line)[0], time.UTC)
@@ -52,7 +52,7 @@ func TestNewTextFormatter(t *testing.T) {
 	assert.WithinDuration(t, time.Now().UTC(), then.UTC(), time.Second)
 
 	// With some fields.
-	line = fmtr.Format(logs.LevelInfo, "Test", Fields{"key": "value"})
+	line = fmtr.Format(levels.Info, "Test", Fields{"key": "value"})
 	assert.Equal(t, "info", strings.Fields(line)[1])
 	assert.Equal(t, "key=\"value\"", strings.Fields(line)[2])
 	assert.Equal(t, "Test", strings.Fields(line)[3])
@@ -63,7 +63,7 @@ func Test_textFormatter_Format(t *testing.T) {
 		cfg Config
 	}
 	type args struct {
-		level  logs.Level
+		level  levels.Level
 		msg    string
 		fields Fields
 	}
@@ -79,7 +79,7 @@ func Test_textFormatter_Format(t *testing.T) {
 				cfg: DefaultConfig,
 			},
 			args: args{
-				level:  logs.LevelInfo,
+				level:  levels.Info,
 				msg:    "Test",
 				fields: nil,
 			},
@@ -95,7 +95,7 @@ func Test_textFormatter_Format(t *testing.T) {
 				cfg: DefaultConfig,
 			},
 			args: args{
-				level: logs.LevelInfo,
+				level: levels.Info,
 				msg:   "Test",
 				fields: map[string]any{
 					"key1": "value1",
