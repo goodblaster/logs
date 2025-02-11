@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/goodblaster/logs/levels"
-	"github.com/goodblaster/logs/pkg/logos"
 	"github.com/stretchr/testify/assert"
 )
 

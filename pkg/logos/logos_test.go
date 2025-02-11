@@ -58,7 +58,7 @@ func TestLogos_With(t *testing.T) {
 	log := NewLogger(levels.Debug, formats.JSON, buf)
 
 	log.With("key", "value").Log(levels.Debug, "logos")
-	assert.Equal(t, "value", MapField(Map(buf), "key"))
+	assert.Equal(t, "value", Map(buf).Field("key"))
 }
 
 func TestLogos_WithFields(t *testing.T) {
@@ -66,7 +66,7 @@ func TestLogos_WithFields(t *testing.T) {
 	log := NewLogger(levels.Debug, formats.JSON, buf)
 
 	log.WithFields(map[string]any{"key": "value"}).Log(levels.Debug, "logos")
-	assert.Equal(t, "value", MapField(Map(buf), "key"))
+	assert.Equal(t, "value", Map(buf).Field("key"))
 }
 
 func TestLogos_LogFunc(t *testing.T) {
@@ -150,30 +150,32 @@ func TestLogos_SubLoggers(t *testing.T) {
 
 	sublog3.Log(levels.Debug, "logos")
 	m := Map(buf)
-	assert.Equal(t, "value", MapField(m, "key"))
-	assert.Equal(t, "value2", MapField(m, "key2"))
-	assert.Equal(t, "value3", MapField(m, "key3"))
+	assert.Equal(t, "value", m.Field("key"))
+	assert.Equal(t, "value2", m.Field("key2"))
+	assert.Equal(t, "value3", m.Field("key3"))
 
 	sublog2.Log(levels.Debug, "logos")
 	m = Map(buf)
-	assert.Equal(t, "value", MapField(m, "key"))
-	assert.Equal(t, "value2", MapField(m, "key2"))
-	assert.Empty(t, MapField(m, "key3"))
+	assert.Equal(t, "value", m.Field("key"))
+	assert.Equal(t, "value2", m.Field("key2"))
+	assert.Empty(t, m.Field("key3"))
 
 	subLog.Log(levels.Debug, "logos")
 	m = Map(buf)
-	assert.Equal(t, "value", MapField(m, "key"))
-	assert.Empty(t, MapField(m, "key2"))
-	assert.Empty(t, MapField(m, "key3"))
+	assert.Equal(t, "value", m.Field("key"))
+	assert.Empty(t, m.Field("key2"))
+	assert.Empty(t, m.Field("key3"))
 }
 
-func Map(buf *bytes.Buffer) map[string]any {
-	m := make(map[string]any)
+type BMap map[string]any
+
+func (m BMap) Field(key string) any {
+	return m["fields"].(map[string]any)[key]
+}
+
+func Map(buf *bytes.Buffer) BMap {
+	m := make(BMap)
 	_ = json.Unmarshal(buf.Bytes(), &m)
 	buf.Reset()
 	return m
-}
-
-func MapField(m map[string]any, key string) any {
-	return m["fields"].(map[string]any)[key]
 }
