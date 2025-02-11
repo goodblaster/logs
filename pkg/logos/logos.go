@@ -14,7 +14,7 @@ import (
 type Fields = map[string]any
 
 type Logger struct {
-	level     levels.Level
+	level     *levels.Level
 	formatter formatters.Formatter
 	writer    io.Writer
 	sync      *sync.Mutex
@@ -23,12 +23,16 @@ type Logger struct {
 
 func NewLogger(level levels.Level, format formats.Format, writer io.Writer) logs.Interface {
 	return &Logger{
-		level:     level,
+		level:     &level,
 		formatter: formatters.NewFormatter(format),
 		writer:    writer,
 		sync:      &sync.Mutex{},
 		fields:    nil,
 	}
+}
+
+func (logger Logger) SetLevel(level levels.Level) {
+	logger.level = &level
 }
 
 func (logger Logger) Copy() Logger {
@@ -66,7 +70,7 @@ func (logger Logger) WithFields(fields Fields) logs.Interface {
 }
 
 func (logger Logger) Log(level levels.Level, format string, args ...any) {
-	if logger.level > level {
+	if *logger.level > level {
 		return
 	}
 	msg := fmt.Sprintf(format, args...)
@@ -76,7 +80,7 @@ func (logger Logger) Log(level levels.Level, format string, args ...any) {
 
 // LogFunc - use for expensive operations where you don't want to calculate the message if the level is not enabled.
 func (logger Logger) LogFunc(level levels.Level, msg func() string) {
-	if logger.level > level {
+	if *logger.level > level {
 		return
 	}
 	logger.Log(level, msg())
