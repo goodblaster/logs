@@ -14,6 +14,8 @@ func NewSimpleLogger(level levels.Level, format formats.Format) Interface {
 
 type SimpleLogger struct{}
 
+func (logger SimpleLogger) SetLevel(level levels.Level) {}
+
 func (logger SimpleLogger) With(key string, value any) Interface {
 	fmt.Println("WITH", key, value)
 	return logger

@@ -17,6 +17,10 @@ func (adapter LogrusAdapter) Level() levels.Level {
 	return levels.Level(adapter.logger.Level)
 }
 
+func (adapter LogrusAdapter) SetLevel(level levels.Level) {
+	adapter.logger.Logger.SetLevel(ToLogrusLevel(level))
+}
+
 func Logrus(logger *logrus.Logger) *LogrusAdapter {
 	return &LogrusAdapter{logrus.NewEntry(logger)}
 }

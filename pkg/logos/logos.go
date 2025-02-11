@@ -32,7 +32,7 @@ func NewLogger(level levels.Level, format formats.Format, writer io.Writer) logs
 }
 
 func (logger Logger) SetLevel(level levels.Level) {
-	logger.level = &level
+	*logger.level = level
 }
 
 func (logger Logger) Copy() Logger {

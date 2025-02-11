@@ -46,6 +46,10 @@ func (adapter ZapAdapter) Level() levels.Level {
 	return levels.Debug // TODO: Implement
 }
 
+func (adapter ZapAdapter) SetLevel(level levels.Level) {
+	// TODO: Implement
+}
+
 func (adapter ZapAdapter) Flush() {
 	_ = adapter.logger.Sync()
 }

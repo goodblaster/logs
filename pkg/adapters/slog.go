@@ -28,6 +28,10 @@ func (adapter SLogAdapter) Level() levels.Level {
 	return levels.Debug // TODO: Implement
 }
 
+func (adapter SLogAdapter) SetLevel(level levels.Level) {
+	slog.SetLogLoggerLevel(ToSLogLevel(level))
+}
+
 func (adapter SLogAdapter) With(key string, value any) logs.Interface {
 	return &SLogAdapter{adapter.logger.With(key, value)}
 }

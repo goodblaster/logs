@@ -53,9 +53,9 @@ func main() {
 
 	log = contrib.NewLogrusLogger(levels.Debug, formats.Console, os.Stdout)
 	log.Log(levels.Debug, "debug logrus ...")
-	
+
 	const (
-		LevelApple levels.Level = iota
+		LevelApple levels.Level = iota + 100
 		LevelBanana
 		LevelCherry
 	)
@@ -79,4 +79,20 @@ func main() {
 
 	logs.SetDefaultLogger(log)
 	logs.Log(LevelApple, "default apple ...")
+
+	logs.SetLevel(LevelBanana)
+	logs.Print("set default level to banana ...")
+	logs.Log(LevelApple, "default apple ... this should not be printed")
+	logs.Log(LevelBanana, "default banana ...")
+	logs.Log(LevelCherry, "default cherry ...")
+
+	sublog := log.With("key", "value")
+	sublog.Log(LevelApple, "this should not be logged")
+	sublog.Log(LevelBanana, "this should be logged")
+
+	// Because sublog is derived from log, the level is inherited.
+	// Change it to LevelApple and the log will once again be printed.
+	log.SetLevel(LevelApple)
+	sublog.Log(LevelApple, "this should be logged")
+
 }

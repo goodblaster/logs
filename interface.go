@@ -7,6 +7,7 @@ func init() {
 }
 
 type Interface interface {
+	SetLevel(level levels.Level)
 	Log(level levels.Level, format string, args ...any)
 	LogFunc(level levels.Level, f func() string)
 	With(key string, value any) Interface
@@ -23,6 +24,10 @@ var DefaultLogger Interface
 
 func SetDefaultLogger(logger Interface) {
 	DefaultLogger = logger
+}
+
+func SetLevel(level levels.Level) {
+	DefaultLogger.SetLevel(level)
 }
 
 func With(key string, value any) Interface {

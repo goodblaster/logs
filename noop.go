@@ -11,6 +11,7 @@ func NewNoopLogger(level levels.Level, format formats.Format) Interface {
 
 type NoopLogger struct{}
 
+func (logger NoopLogger) SetLevel(level levels.Level)                        {}
 func (logger NoopLogger) With(key string, value any) Interface               { return logger }
 func (logger NoopLogger) WithFields(fields map[string]any) Interface         { return logger }
 func (logger NoopLogger) Log(level levels.Level, format string, args ...any) {}

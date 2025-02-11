@@ -1,6 +1,10 @@
 package levels
 
-import "github.com/goodblaster/logs/colors"
+import (
+	"math"
+
+	"github.com/goodblaster/logs/colors"
+)
 
 type Level int
 
@@ -8,6 +12,12 @@ func (level Level) String() string {
 	if name, ok := LevelNames[level]; ok {
 		return name
 	}
+
+	// Keep "print" as a default option.
+	if level == Print {
+		return "print"
+	}
+
 	return "unknown"
 }
 
@@ -19,7 +29,7 @@ const (
 	DPanic
 	Panic
 	Fatal
-	Print = 10
+	Print = math.MaxInt
 )
 
 // LevelNames - change if you like.
