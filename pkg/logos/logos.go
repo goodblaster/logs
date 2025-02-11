@@ -69,6 +69,10 @@ func (logger Logger) WithFields(fields Fields) logs.Interface {
 	return &newLogger
 }
 
+func (logger Logger) WithError(err error) logs.Interface {
+	return logger.With("error", err)
+}
+
 func (logger Logger) Log(level levels.Level, format string, args ...any) {
 	if *logger.level > level {
 		return

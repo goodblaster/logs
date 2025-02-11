@@ -12,6 +12,7 @@ type Interface interface {
 	LogFunc(level levels.Level, f func() string)
 	With(key string, value any) Interface
 	WithFields(fields map[string]any) Interface
+	WithError(err error) Interface
 	Print(format string, args ...any)
 	Debug(format string, args ...any)
 	Info(format string, args ...any)
@@ -35,7 +36,7 @@ func With(key string, value any) Interface {
 }
 
 func WithError(err error) Interface {
-	return DefaultLogger.With("error", err)
+	return DefaultLogger.WithError(err)
 }
 
 func WithFields(fields map[string]any) Interface {

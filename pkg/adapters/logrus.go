@@ -33,6 +33,10 @@ func (adapter LogrusAdapter) WithFields(fields map[string]any) logs.Interface {
 	return &LogrusAdapter{adapter.logger.WithFields(logrus.Fields(fields))}
 }
 
+func (adapter LogrusAdapter) WithError(err error) logs.Interface {
+	return adapter.With("error", err)
+}
+
 func (adapter LogrusAdapter) Log(level levels.Level, format string, args ...any) {
 	switch level {
 	case levels.Print:

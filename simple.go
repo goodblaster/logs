@@ -20,8 +20,14 @@ func (logger SimpleLogger) With(key string, value any) Interface {
 	fmt.Println("WITH", key, value)
 	return logger
 }
+
 func (logger SimpleLogger) WithFields(fields map[string]any) Interface {
 	fmt.Println("WITH_FIELDS", fields)
+	return logger
+}
+
+func (logger SimpleLogger) WithError(err error) Interface {
+	fmt.Println("WITH_ERROR", err)
 	return logger
 }
 

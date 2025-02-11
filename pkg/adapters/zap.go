@@ -87,6 +87,10 @@ func (adapter ZapAdapter) Log(level levels.Level, format string, args ...any) {
 	}
 }
 
+func (adapter ZapAdapter) WithError(err error) logs.Interface {
+	return adapter.With("error", err)
+}
+
 func (adapter ZapAdapter) LogFunc(level levels.Level, msg func() string) {
 	if level > adapter.Level() {
 		return

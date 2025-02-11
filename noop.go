@@ -14,6 +14,7 @@ type NoopLogger struct{}
 func (logger NoopLogger) SetLevel(level levels.Level)                        {}
 func (logger NoopLogger) With(key string, value any) Interface               { return logger }
 func (logger NoopLogger) WithFields(fields map[string]any) Interface         { return logger }
+func (logger NoopLogger) WithError(err error) Interface                      { return logger }
 func (logger NoopLogger) Log(level levels.Level, format string, args ...any) {}
 func (logger NoopLogger) LogFunc(level levels.Level, f func() string)        {}
 func (logger NoopLogger) Print(format string, args ...any)                   {}
