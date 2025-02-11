@@ -44,6 +44,10 @@ func (adapter SLogAdapter) WithFields(fields map[string]any) logs.Interface {
 	return &SLogAdapter{adapter.logger.With(params...)}
 }
 
+func (adapter SLogAdapter) WithError(err error) logs.Interface {
+	return adapter.With("error", err)
+}
+
 func (adapter SLogAdapter) Log(level levels.Level, format string, args ...any) {
 	msg := fmt.Sprintf(format, args...)
 	adapter.logger.Log(context.Background(), ToSLogLevel(level), msg)
