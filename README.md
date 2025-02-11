@@ -31,7 +31,10 @@ You can set it as a default logger so you don't have to pass the logger around.
     logs.Debug("default ...")
 ```
 
-If you want to change log levels, and names, do whatever you like. Example:
+If you want to change log levels, and names, do whatever you like.
+Note that this is a global change. 
+If you are running multiple loggers, this could cause a problem.
+Example:
 
 ```go
 func main() {
@@ -57,10 +60,6 @@ func main() {
     log.Log(LevelApple, "apple ...")
     log.Log(LevelBanana, "banana ...")
     log.Log(LevelCherry, "cherry ...")
-    
-    // Or set as default.
-    logs.SetDefaultLogger(log)
-    logs.Log(LevelApple, "default apple ...")
 }
 ```
 
