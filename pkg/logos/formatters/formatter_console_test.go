@@ -1,4 +1,4 @@
-package logos
+package formatters
 
 import (
 	"strings"
@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/goodblaster/logs/levels"
+	"github.com/goodblaster/logs/pkg/logos"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -52,7 +53,7 @@ func TestNewConsoleFormatter(t *testing.T) {
 	assert.WithinDuration(t, time.Now().UTC(), then.UTC(), time.Second)
 
 	// With some fields.
-	line = fmtr.Format(levels.Error, "Test", Fields{"key": "value"})
+	line = fmtr.Format(levels.Error, "Test", map[string]any{"key": "value"})
 	assert.Equal(t, "\x1b[31merror\x1b[0m", strings.Fields(line)[1])
 	assert.Equal(t, "key=\"value\"", strings.Fields(line)[2])
 	assert.Equal(t, "Test", strings.Fields(line)[3])
@@ -65,7 +66,7 @@ func Test_consoleFormatter_Format(t *testing.T) {
 	type args struct {
 		level  levels.Level
 		msg    string
-		fields Fields
+		fields map[string]any
 	}
 	tests := []struct {
 		name     string

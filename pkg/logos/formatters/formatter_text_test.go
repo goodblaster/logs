@@ -1,4 +1,4 @@
-package logos
+package formatters
 
 import (
 	"strings"
@@ -52,7 +52,7 @@ func TestNewTextFormatter(t *testing.T) {
 	assert.WithinDuration(t, time.Now().UTC(), then.UTC(), time.Second)
 
 	// With some fields.
-	line = fmtr.Format(levels.Info, "Test", Fields{"key": "value"})
+	line = fmtr.Format(levels.Info, "Test", map[string]any{"key": "value"})
 	assert.Equal(t, "info", strings.Fields(line)[1])
 	assert.Equal(t, "key=\"value\"", strings.Fields(line)[2])
 	assert.Equal(t, "Test", strings.Fields(line)[3])
@@ -65,7 +65,7 @@ func Test_textFormatter_Format(t *testing.T) {
 	type args struct {
 		level  levels.Level
 		msg    string
-		fields Fields
+		fields map[string]any
 	}
 	tests := []struct {
 		name     string

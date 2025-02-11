@@ -1,4 +1,4 @@
-package logos
+package formatters
 
 import (
 	"time"
@@ -8,7 +8,7 @@ import (
 )
 
 type Formatter interface {
-	Format(level levels.Level, msg string, fields Fields) string
+	Format(level levels.Level, msg string, fields map[string]any) string
 }
 
 type Config struct {

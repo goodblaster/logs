@@ -1,4 +1,4 @@
-package logos
+package formatters
 
 import (
 	"encoding/json"
@@ -53,7 +53,7 @@ func Test_jsonFormatter_Format(t *testing.T) {
 	type args struct {
 		level  levels.Level
 		msg    string
-		fields Fields
+		fields map[string]any
 	}
 	tests := []struct {
 		name     string

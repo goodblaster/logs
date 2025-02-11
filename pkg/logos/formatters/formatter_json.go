@@ -1,4 +1,4 @@
-package logos
+package formatters
 
 import (
 	"encoding/json"
@@ -15,12 +15,12 @@ func NewJsonFormatter(cfg Config) Formatter {
 	return &jsonFormatter{cfg: cfg}
 }
 
-func (f jsonFormatter) Format(level levels.Level, msg string, fields Fields) string {
+func (f jsonFormatter) Format(level levels.Level, msg string, fields map[string]any) string {
 	type Entry struct {
-		Level     string `json:"level"`
-		Timestamp string `json:"timestamp"`
-		Fields    Fields `json:"fields,omitempty"`
-		Msg       string `json:"msg"`
+		Level     string         `json:"level"`
+		Timestamp string         `json:"timestamp"`
+		Fields    map[string]any `json:"fields,omitempty"`
+		Msg       string         `json:"msg"`
 	}
 
 	entry := Entry{

@@ -3,6 +3,7 @@ package contrib
 import (
 	"io"
 
+	"github.com/goodblaster/logs"
 	"github.com/goodblaster/logs/formats"
 	"github.com/goodblaster/logs/levels"
 	"github.com/goodblaster/logs/pkg/adapters"
@@ -10,7 +11,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func NewZapLogger(level levels.Level, format formats.Format, writer io.Writer) *adapters.ZapAdapter {
+func NewZapLogger(level levels.Level, format formats.Format, writer io.Writer) logs.Interface {
 	encoding := func(format formats.Format) string {
 		switch format {
 		case formats.JSON:

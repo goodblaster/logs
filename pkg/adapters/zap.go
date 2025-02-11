@@ -42,6 +42,10 @@ type ZapAdapter struct {
 	logger *zap.Logger
 }
 
+func (adapter ZapAdapter) Level() levels.Level {
+	return levels.Debug // TODO: Implement
+}
+
 func (adapter ZapAdapter) Flush() {
 	_ = adapter.logger.Sync()
 }
@@ -80,6 +84,10 @@ func (adapter ZapAdapter) Log(level levels.Level, format string, args ...any) {
 }
 
 func (adapter ZapAdapter) LogFunc(level levels.Level, msg func() string) {
+	if level > adapter.Level() {
+		return
+	}
+
 	switch level {
 	case levels.Debug:
 		adapter.Debug(msg())
@@ -138,4 +146,48 @@ func (adapter ZapAdapter) Panic(format string, args ...any) {
 func (adapter ZapAdapter) DPanic(format string, args ...any) {
 	msg := fmt.Sprintf(format, args...)
 	adapter.logger.DPanic(msg)
+}
+
+func ToZapLevel(level levels.Level) zapcore.Level {
+	switch level {
+	case levels.Debug:
+		return zap.DebugLevel
+	case levels.Info:
+		return zap.InfoLevel
+	case levels.Warn:
+		return zap.WarnLevel
+	case levels.Error:
+		return zap.ErrorLevel
+	case levels.DPanic:
+		return zap.DPanicLevel
+	case levels.Panic:
+		return zap.PanicLevel
+	case levels.Fatal:
+		return zap.FatalLevel
+	case levels.Print:
+		return PrintLevel
+	}
+	return zap.InfoLevel
+}
+
+func FromZapLevel(level zapcore.Level) levels.Level {
+	switch level {
+	case zap.DebugLevel:
+		return levels.Debug
+	case zap.InfoLevel:
+		return levels.Info
+	case zap.WarnLevel:
+		return levels.Warn
+	case zap.ErrorLevel:
+		return levels.Error
+	case zap.DPanicLevel:
+		return levels.DPanic
+	case zap.PanicLevel:
+		return levels.Panic
+	case zap.FatalLevel:
+		return levels.Fatal
+	case PrintLevel:
+		return levels.Print
+	}
+	return levels.Info
 }

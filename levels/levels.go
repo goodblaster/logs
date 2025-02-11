@@ -41,13 +41,13 @@ func init() {
 	}
 
 	LevelColors = map[Level]colors.TextColor{
-		Debug:  colors.TextColorBlue,
-		Info:   colors.TextColorGreen,
-		Warn:   colors.TextColorYellow,
-		Error:  colors.TextColorRed,
-		DPanic: colors.TextColorPurple,
-		Panic:  colors.TextColorPurple,
-		Fatal:  colors.TextColorPurple,
-		Print:  colors.TextColorReset,
+		Debug:  colors.TextBlue,
+		Info:   colors.TextGreen,
+		Warn:   colors.TextYellow,
+		Error:  colors.TextRed,
+		DPanic: colors.TextPurple,
+		Panic:  colors.TextPurple,
+		Fatal:  colors.TextPurple,
+		Print:  colors.Reset,
 	}
 }

@@ -24,6 +24,10 @@ type SLogAdapter struct {
 	logger *slog.Logger
 }
 
+func (adapter SLogAdapter) Level() levels.Level {
+	return levels.Debug // TODO: Implement
+}
+
 func (adapter SLogAdapter) With(key string, value any) logs.Interface {
 	return &SLogAdapter{adapter.logger.With(key, value)}
 }
@@ -42,6 +46,9 @@ func (adapter SLogAdapter) Log(level levels.Level, format string, args ...any) {
 }
 
 func (adapter SLogAdapter) LogFunc(level levels.Level, msg func() string) {
+	if level > adapter.Level() {
+		return
+	}
 	adapter.logger.Log(context.Background(), ToSLogLevel(level), msg())
 }
 

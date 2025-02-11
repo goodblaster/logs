@@ -8,13 +8,14 @@ import (
 	"github.com/goodblaster/logs"
 	"github.com/goodblaster/logs/formats"
 	"github.com/goodblaster/logs/levels"
+	"github.com/goodblaster/logs/pkg/logos/formatters"
 )
 
 type Fields = map[string]any
 
 type Logger struct {
 	level     levels.Level
-	formatter Formatter
+	formatter formatters.Formatter
 	writer    io.Writer
 	sync      *sync.Mutex
 	fields    Fields
@@ -23,7 +24,7 @@ type Logger struct {
 func NewLogger(level levels.Level, format formats.Format, writer io.Writer) logs.Interface {
 	return &Logger{
 		level:     level,
-		formatter: NewFormatter(format),
+		formatter: formatters.NewFormatter(format),
 		writer:    writer,
 		sync:      &sync.Mutex{},
 		fields:    nil,

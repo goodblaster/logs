@@ -1,4 +1,4 @@
-package logos
+package formatters
 
 import (
 	"encoding/json"
@@ -19,7 +19,7 @@ func NewConsoleFormatter(cfg Config) Formatter {
 	return &consoleFormatter{cfg: cfg}
 }
 
-func (f consoleFormatter) Format(level levels.Level, msg string, fields Fields) string {
+func (f consoleFormatter) Format(level levels.Level, msg string, fields map[string]any) string {
 	var tuples []string
 	for key, value := range fields {
 		b, _ := json.Marshal(value)
@@ -30,5 +30,5 @@ func (f consoleFormatter) Format(level levels.Level, msg string, fields Fields) 
 	// ANSI color codes
 	textColor := levels.LevelColors[level]
 
-	return fmt.Sprintf("%s\t%s%s%s\t%s\t%s", f.cfg.Timestamp(), textColor, level.String(), colors.TextColorReset, strings.Join(tuples, " "), msg)
+	return fmt.Sprintf("%s\t%s%s%s\t%s\t%s", f.cfg.Timestamp(), textColor, level.String(), colors.Reset, strings.Join(tuples, " "), msg)
 }

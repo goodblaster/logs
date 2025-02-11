@@ -14,6 +14,11 @@ import (
 
 func main() {
 	log := logos.NewLogger(levels.Debug, formats.Console, os.Stdout)
+	log.Debug("logos ...")
+
+	logs.SetDefaultLogger(log)
+	logs.Debug("logos as default logger ...")
+
 	log.With("key", 9).Error("testing ...")
 	log = log.With("key2", "two")
 	log.Warn("warning ...")
@@ -46,6 +51,9 @@ func main() {
 	log.Log(levels.Info, "info zap ...")
 	log.Log(levels.Warn, "warn zap ...")
 
+	log = contrib.NewLogrusLogger(levels.Debug, formats.Console, os.Stdout)
+	log.Log(levels.Debug, "debug logrus ...")
+	
 	const (
 		LevelApple levels.Level = iota
 		LevelBanana
@@ -59,9 +67,9 @@ func main() {
 	}
 
 	levels.LevelColors = map[levels.Level]colors.TextColor{
-		LevelApple:  colors.TextColorGreen,
-		LevelBanana: colors.TextColorYellow,
-		LevelCherry: colors.TextColorRed,
+		LevelApple:  colors.TextGreen,
+		LevelBanana: colors.TextYellow,
+		LevelCherry: colors.TextRed,
 	}
 
 	log = logos.NewLogger(LevelApple, formats.Console, os.Stdout)

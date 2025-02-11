@@ -1,4 +1,4 @@
-package logos
+package formatters
 
 import (
 	"encoding/json"
@@ -16,7 +16,7 @@ type textFormatter struct {
 func NewTextFormatter(cfg Config) Formatter {
 	return &textFormatter{cfg: cfg}
 }
-func (f textFormatter) Format(level levels.Level, msg string, fields Fields) string {
+func (f textFormatter) Format(level levels.Level, msg string, fields map[string]any) string {
 	var tuples []string
 	for key, value := range fields {
 		b, _ := json.Marshal(value)
